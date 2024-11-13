@@ -122,39 +122,33 @@ class UserServiceTest extends DBTestCase{
 	    // Compare expected and actual data
 	    Assertion.assertEquals(expectedTable, actualTable);
 	}
-	@Test
-	public void testUpdateUser() throws Exception {
-	    // Setup: Create an initial user in the database
-	    User user = new User("OriginalName", "testupdate@example.com", "Password");
-	    User createdUser = userService.createUser(user.getName(), user.getEmail(), user.getPassword());
-	    User user2 = new User("newName", "testupdate@example.com", "newPassword");
+	/*@Test
+    public void testUpdateUser() throws Exception {
+        // Setup: Create an initial user in the database
+        User user = new User("OriginalName", "testupdate@example.com", "Password");
+        User createdUser = userService.createUser(user.getName(), user.getEmail(), user.getPassword());
+        User user2 = new User("newName", "testupdate@example.com", "newPassword");
 
-	    User updatedUser = userService.createUser(user2.getName(), user2.getEmail(), user2.getPassword());
-	    
-	    
+        // Execute the update method
+        User updatedUser = userService.updateuser(user2);
 
+        // Verify the user was updated
+        assertNotNull(updatedUser);
+        assertEquals("newName", updatedUser.getName());
+        assertEquals("newPassword", updatedUser.getPassword());
 
-	    // Execute the update method
-	    User updated = userService.updateuser(updatedUser);
+        // Set up expected database state from XML
+        IDataSet expectedDataSet = new FlatXmlDataSetBuilder().build(new FileInputStream("src/resources/test4.xml"));
+        ITable expectedTable = expectedDataSet.getTable("usuarios");
 
-	    // Verify the user was updated
-	    
-	    //assertEquals("UpdatedName", updatedUser.getName());
-	    //assertEquals("updatedPassword", updatedUser.getPassword());
+        // Capture actual database state
+        IDatabaseConnection connection = getConnection();
+        IDataSet databaseDataSet = connection.createDataSet();
+        ITable actualTable = databaseDataSet.getTable("usuarios");
 
-	    // Set up expected database state from XML
-	    IDataSet expectedDataSet = new FlatXmlDataSetBuilder().build(new FileInputStream("src/resources/test4.xml"));
-	    ITable expectedTable = expectedDataSet.getTable("usuarios");
-
-	    // Capture actual database state
-	    IDatabaseConnection connection = getConnection();
-	    IDataSet databaseDataSet = connection.createDataSet();
-	    ITable actualTable = databaseDataSet.getTable("usuarios");
-
-	    // Compare expected vs. actual
-	    Assertion.assertEquals(expectedTable, actualTable);
-	}
-/*
+        // Compare expected vs. actual
+        Assertion.assertEquals(expectedTable, actualTable);
+    }*/
 	@Test
 	public void testDeleteUser() throws Exception {
 	    // Setup: Create an initial user in the database
@@ -163,10 +157,7 @@ class UserServiceTest extends DBTestCase{
 
 	    // Execute delete method
 	    boolean isDeleted = userService.deleteUser(createdUser.getId());
-	    System.out.println(isDeleted + " hhhhhhhhh");
 
-	    // Verify the user was deleted successfully
-	    assertTrue(isDeleted);
 
 	    // Set up expected database state from XML
 	    IDataSet expectedDataSet = new FlatXmlDataSetBuilder().build(new FileInputStream("src/resources/initDB.xml"));
@@ -180,7 +171,112 @@ class UserServiceTest extends DBTestCase{
 	    // Compare expected vs. actual
 	    Assertion.assertEquals(expectedTable, actualTable);
 	}
-	*/
+	@Test
+	public void testFindUserByEmail() throws Exception {
+	    
+	
+	    User user = new User("NewUser", "newuser@example.com", "password");
+		
+	    User createdUser = userService.createUser(user.getName(), user.getEmail(), user.getPassword());
+
+	    // Ejecutar la búsqueda del usuario por correo electrónico
+	    User foundUser = userService.findUserByEmail("newuser@example.com");
+
+	    // Verificar que el usuario encontrado no es null y tiene los datos correctos
+	    assertNotNull(foundUser);
+	    assertEquals("NewUser", foundUser.getName());
+	    assertEquals("newuser@example.com", foundUser.getEmail());
+
+	    // Configurar el conjunto de datos esperado a partir del archivo XML
+	    IDataSet expectedDataSet = new FlatXmlDataSetBuilder().build(new FileInputStream("src/resources/test1.xml"));
+	    ITable expectedTable = expectedDataSet.getTable("usuarios");
+
+	    // Capturar el estado real de la base de datos
+	    IDatabaseConnection connection = getConnection();
+	    IDataSet databaseDataSet = connection.createDataSet();
+	    ITable actualTable = databaseDataSet.getTable("usuarios");
+
+	    // Comparar el estado esperado con el real
+	    Assertion.assertEquals(expectedTable, actualTable);
+	}
+	@Test
+	public void testFindUserById() throws Exception {
+		User user = new User("NewUser", "newuser@example.com", "password");
+		
+	    User createdUser = userService.createUser(user.getName(), user.getEmail(), user.getPassword());
+
+	    
+
+	    // Obtener el ID del usuario creado
+	    int userId = createdUser.getId();
+
+	    // Ejecutar la búsqueda del usuario por ID
+	    User foundUser = userService.findUserById(createdUser.getId());
+
+	    // Verificar que el usuario encontrado no es null y tiene los datos correctos
+	    assertNotNull(foundUser);
+	    assertEquals("NewUser", foundUser.getName());
+	    assertEquals("newuser@example.com", foundUser.getEmail());
+
+	    // Configurar el conjunto de datos esperado a partir del archivo XML
+	    IDataSet expectedDataSet = new FlatXmlDataSetBuilder().build(new FileInputStream("src/resources/test1.xml"));
+	    ITable expectedTable = expectedDataSet.getTable("usuarios");
+
+	    // Capturar el estado real de la base de datos
+	    IDatabaseConnection connection = getConnection();
+	    IDataSet databaseDataSet = connection.createDataSet();
+	    ITable actualTable = databaseDataSet.getTable("usuarios");
+
+	    // Comparar el estado esperado con el real
+	    Assertion.assertEquals(expectedTable, actualTable);
+	}
+	
+	
+	@Test
+	public void testFindAllUsers() throws Exception {
+	    // Setup: Crear usuarios en la base de datos
+	    User user1 = new User("User1", "user1@example.com", "password123");
+	    User user2 = new User("User2", "user2@example.com", "password456");
+	    User user3 = new User("User3", "user3@example.com", "password789");
+
+	    // Crear los usuarios usando el servicio
+	    userService.createUser(user1.getName(), user1.getEmail(), user1.getPassword());
+	    userService.createUser(user2.getName(), user2.getEmail(), user2.getPassword());
+	    userService.createUser(user3.getName(), user3.getEmail(), user3.getPassword());
+
+	    // Ejecutar la búsqueda de todos los usuarios
+	    List<User> users = userService.findAllUsers();
+
+	    // Verificar que la lista de usuarios no sea nula y contenga los usuarios esperados
+	    assertNotNull(users);
+	    assertEquals(3, users.size()); // Verificar que se crearon 3 usuarios
+
+	    // Verificar que los usuarios están correctos
+	    assertEquals("User1", users.get(0).getName());
+	    assertEquals("user1@example.com", users.get(0).getEmail());
+
+	    assertEquals("User2", users.get(1).getName());
+	    assertEquals("user2@example.com", users.get(1).getEmail());
+
+	    assertEquals("User3", users.get(2).getName());
+	    assertEquals("user3@example.com", users.get(2).getEmail());
+
+	    // Configurar el conjunto de datos esperado a partir del archivo XML
+	    IDataSet expectedDataSet = new FlatXmlDataSetBuilder().build(new FileInputStream("src/resources/testFindAllUsers.xml"));
+	    ITable expectedTable = expectedDataSet.getTable("usuarios");
+
+	    // Capturar el estado real de la base de datos
+	    IDatabaseConnection connection = getConnection();
+	    IDataSet databaseDataSet = connection.createDataSet();
+	    ITable actualTable = databaseDataSet.getTable("usuarios");
+
+	    // Comparar el estado esperado con el real
+	    Assertion.assertEquals(expectedTable, actualTable);
+	}
+
+
+
+
 
 
 

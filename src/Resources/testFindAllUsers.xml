@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <usuarios>
+        <id>1</id>
+        <name>User1</name>
+        <email>user1@example.com</email>
+        <password>password123</password>
+        <isLogged>false</isLogged>
+    </usuarios>
+    <usuarios>
+        <id>2</id>
+        <name>User2</name>
+        <email>user2@example.com</email>
+        <password>password456</password>
+        <isLogged>false</isLogged>
+    </usuarios>
+    <usuarios>
+        <id>3</id>
+        <name>User3</name>
+        <email>user3@example.com</email>
+        <password>password789</password>
+        <isLogged>false</isLogged>
+    </usuarios>
+</dataset>
