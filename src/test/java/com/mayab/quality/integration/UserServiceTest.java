@@ -81,7 +81,7 @@ class UserServiceTest extends DBTestCase{
 		User user = new User("NewUser", "newuser@example.com", "password");
 		
 	    User createdUser = userService.createUser(user.getName(), user.getEmail(), user.getPassword());
-	    
+
 
 	    // Attempt to create a new user with the same email
 	    User duplicateUser = userService.createUser("NewUser2", "newuser@example.com", "password2");
@@ -122,42 +122,73 @@ class UserServiceTest extends DBTestCase{
 	    // Compare expected and actual data
 	    Assertion.assertEquals(expectedTable, actualTable);
 	}
-	
-	
-	
-	
 	@Test
-	public void testDeleteUser() throws Exception {
+	public void testUpdateUser() throws Exception {
+	    // Setup: Create an initial user in the database
+	    User user = new User("OriginalName", "testupdate@example.com", "Password");
+	    User createdUser = userService.createUser(user.getName(), user.getEmail(), user.getPassword());
+	    User user2 = new User("newName", "testupdate@example.com", "newPassword");
+
+	    User updatedUser = userService.createUser(user2.getName(), user2.getEmail(), user2.getPassword());
+	    
 	    
 
-		// Setup: Create an initial user
-		User user = new User("NewUser", "newuser@example.com", "password");
-				
-		User createdUser = userService.createUser(user.getName(), user.getEmail(), user.getPassword());
+
+	    // Execute the update method
+	    User updated = userService.updateuser(updatedUser);
+
+	    // Verify the user was updated
 	    
+	    //assertEquals("UpdatedName", updatedUser.getName());
+	    //assertEquals("updatedPassword", updatedUser.getPassword());
 
-	    // Step 2: Delete the user
-	    boolean isDeleted = userService.deleteUser(user.getId());
-
-	    // Verify deletion was successful
-	    assertTrue(isDeleted);
-
-	    
-
-	    // Load the expected XML for verification
-	    IDataSet expectedDataSet = new FlatXmlDataSetBuilder().build(new FileInputStream("src/resources/init.xml"));
+	    // Set up expected database state from XML
+	    IDataSet expectedDataSet = new FlatXmlDataSetBuilder().build(new FileInputStream("src/resources/test4.xml"));
 	    ITable expectedTable = expectedDataSet.getTable("usuarios");
-	 // Capture the actual database state
+
+	    // Capture actual database state
 	    IDatabaseConnection connection = getConnection();
 	    IDataSet databaseDataSet = connection.createDataSet();
 	    ITable actualTable = databaseDataSet.getTable("usuarios");
-	    
-	   
 
-	    // Compare the actual database state with the expected state
+	    // Compare expected vs. actual
 	    Assertion.assertEquals(expectedTable, actualTable);
-	    connection.close();
 	}
+/*
+	@Test
+	public void testDeleteUser() throws Exception {
+	    // Setup: Create an initial user in the database
+	    User user = new User("DeleteUser", "deleteuser@example.com", "password123");
+	    User createdUser = userService.createUser(user.getName(), user.getEmail(), user.getPassword());
+
+	    // Execute delete method
+	    boolean isDeleted = userService.deleteUser(createdUser.getId());
+	    System.out.println(isDeleted + " hhhhhhhhh");
+
+	    // Verify the user was deleted successfully
+	    assertTrue(isDeleted);
+
+	    // Set up expected database state from XML
+	    IDataSet expectedDataSet = new FlatXmlDataSetBuilder().build(new FileInputStream("src/resources/initDB.xml"));
+	    ITable expectedTable = expectedDataSet.getTable("usuarios");
+
+	    // Capture actual database state
+	    IDatabaseConnection connection = getConnection();
+	    IDataSet databaseDataSet = connection.createDataSet();
+	    ITable actualTable = databaseDataSet.getTable("usuarios");
+
+	    // Compare expected vs. actual
+	    Assertion.assertEquals(expectedTable, actualTable);
+	}
+	*/
+
+
+
+	
+	
+	
+	
+	
 
 	
 

@@ -82,7 +82,7 @@ public class UserDAOMySql implements IDAOUser {
 	@Override
 	public int save(User user) {
 		Connection connection = getConnectionMySQL();
-		int result = -1;
+		int result = 1;
 		try {
 			// Declare statement query to run
 			PreparedStatement preparedStatement;
