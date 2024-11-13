@@ -24,7 +24,7 @@ public class UserDAOMySql implements IDAOUser {
 			// Establish the driver connector
 			Class.forName("com.mysql.cj.jdbc.Driver");
 			// Set the URI for connecting the MySql database
-			con = DriverManager.getConnection("jdbc:mysql://localhost:3307/calidad2024", "root", "123456");
+			con = DriverManager.getConnection("jdbc:mysql://localhost:3307/calidad", "root", "123456");
 		} catch (Exception e) {
 			System.out.println(e);
 		}
