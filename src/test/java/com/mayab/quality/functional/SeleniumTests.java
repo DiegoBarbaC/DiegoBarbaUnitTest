@@ -12,6 +12,8 @@ import org.junit.jupiter.api.TestMethodOrder;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+
+
 import org.junit.jupiter.api.*;
 
 import io.github.bonigarcia.wdm.WebDriverManager;
@@ -126,6 +128,72 @@ class SeleniumTests {
         // Verificar que el texto NO esté presente
         assertFalse("El registro 'John Doe' todavía está presente en la tabla.", isPresent);
     }
+    @Test
+    @Order(6)
+    public void findAll() throws Exception {
+    	driver.get("https://mern-crud-mpfr.onrender.com/");
+    	pause(4000);
+        driver.findElement(By.xpath("//div[@id='root']/div/div[2]/button")).click();
+        driver.findElement(By.name("name")).click();
+        driver.findElement(By.name("name")).clear();
+        driver.findElement(By.name("name")).sendKeys("Esteban");
+        driver.findElement(By.name("email")).click();
+        driver.findElement(By.name("email")).clear();
+        driver.findElement(By.name("email")).sendKeys("esteban@gmail.com");
+        driver.findElement(By.name("age")).click();
+        driver.findElement(By.name("age")).clear();
+        driver.findElement(By.name("age")).sendKeys("20");
+        driver.findElement(By.xpath("//div[2]/div/i")).click();
+        driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Male'])[1]/following::div[2]")).click();
+        driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Woah!'])[1]/following::button[1]")).click();
+        driver.findElement(By.name("name")).click();
+        driver.findElement(By.name("name")).clear();
+        pause(1000);
+        driver.findElement(By.name("name")).sendKeys("Diego");
+        driver.findElement(By.name("email")).click();
+        driver.findElement(By.name("email")).clear();
+        driver.findElement(By.name("email")).sendKeys("diego@gmail.com");
+        driver.findElement(By.name("age")).click();
+        driver.findElement(By.name("age")).clear();
+        driver.findElement(By.name("age")).sendKeys("23");
+        driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Gender'])[2]/following::div[1]")).click();
+        driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Male'])[1]/following::div[2]")).click();
+        driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Woah!'])[1]/following::button[1]")).click();
+        pause(3000);
+        String firstResult = driver.findElement(By.xpath("/html/body/div[2]/div/div[2]/table/tbody/tr[2]/td[1]")).getText();
+        assertThat(firstResult, is("Esteban"));
+        String secondResult = driver.findElement(By.xpath("/html/body/div[2]/div/div[2]/table/tbody/tr[1]/td[1]")).getText();
+        assertThat(secondResult, is("Diego"));
+
+  
+
+    }
+    
+    @Test
+    @Order(5)
+    public void findOnebyName() throws Exception {
+      driver.get("https://mern-crud-mpfr.onrender.com/");
+      driver.findElement(By.xpath("//div[@id='root']/div/div[2]/button")).click();
+      driver.findElement(By.name("name")).click();
+      driver.findElement(By.name("name")).clear();
+      driver.findElement(By.name("name")).sendKeys("Javier");
+      driver.findElement(By.name("email")).click();
+      driver.findElement(By.name("email")).clear();
+      driver.findElement(By.name("email")).sendKeys("javier@gmail.com");
+      driver.findElement(By.name("age")).click();
+      driver.findElement(By.name("age")).clear();
+      driver.findElement(By.name("age")).sendKeys("19");
+      driver.findElement(By.xpath("//div[2]/div/i")).click();
+      driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Male'])[2]/following::div[1]")).click();
+      driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Woah!'])[1]/following::button[1]")).click();
+      pause(2000);
+      String actualResult = driver.findElement(By.xpath("/html/body/div[2]/div/div[2]/table/tbody/tr[1]/td[1]")).getText();
+      
+      //Comparación 
+      System.out.println(actualResult);
+      assertThat(actualResult, is("Javier"));
+    }
+
     private void pause(long mils) {
         try {
             Thread.sleep(mils);
