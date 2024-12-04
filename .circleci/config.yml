@@ -1,17 +1,38 @@
 version: 2.1
 
+# Definir el executor para usar Docker
 executors:
   docker-executor:
     docker:
       - image: maven:3.8.5-openjdk-17  # Usar Maven base image para la ejecución de las pruebas
     working_directory: ~/workspace
 
+# Definir el servicio de MySQL para el job
+services:
+  - mysql:
+      image: mysql:5.7  # Usar MySQL 5.7 como servicio
+      environment:
+        MYSQL_ROOT_PASSWORD: 123456  # Contraseña para el usuario root
+        MYSQL_DATABASE: calidad  # Nombre de la base de datos
+        MYSQL_USER: root         # Usuario de MySQL
+        MYSQL_PASSWORD: 123456   # Contraseña del usuario root
+
 jobs:
   build:
-    docker:
-      - image: maven:3.8.5-openjdk-17  # Usa una imagen base para el entorno
+    executor: docker-executor
     steps:
       - checkout  # Hacer checkout del código fuente
+      - setup_remote_docker:
+          version: 20.10.7  # Docker version
+          docker_layer_caching: true  # Activar el caching de Docker
+      - run:
+          name: Esperar a que MySQL esté listo
+          command: |
+            # Esperar a que MySQL esté listo antes de ejecutar las pruebas
+            until docker exec mysql mysqladmin --user=root --password=123456 --host="localhost" --port=3306 ping --silent; do
+              echo "Esperando a que MySQL esté listo..."
+              sleep 5
+            done
       - run:
           name: Construir la imagen Docker personalizada
           command: |
@@ -22,8 +43,7 @@ jobs:
             docker run --rm diegobarba/mi-imagen:latest
 
   push:
-    docker:
-      - image: maven:3.8.5-openjdk-17
+    executor: docker-executor
     steps:
       - checkout
       - run:
