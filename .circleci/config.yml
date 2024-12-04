@@ -3,7 +3,7 @@ version: 2.1
 executors:
   docker-executor:
     docker:
-      - image: maven:3.8.5-openjdk-17  # Usa una imagen base para el entorno
+      - image: maven:3.8.5-openjdk-17  # Usar Maven base image para la ejecución de las pruebas
     working_directory: ~/workspace
 
 jobs:
@@ -13,6 +13,7 @@ jobs:
     steps:
       - checkout  # Hacer checkout del código fuente
       - setup_remote_docker:
+          version: 20.10.7  # Versión de Docker que puedes configurar si lo necesitas
           docker_layer_caching: true  # Activar el caching de Docker
       - run:
           name: Construir la imagen Docker personalizada
