@@ -34,11 +34,11 @@ jobs:
             
 
 
-      - run:
-          name: Configurar base de datos
-          #command: |
-            echo "Creando base de datos para pruebas..."
-            mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE calidad;"      
+      #- run:
+       #   name: Configurar base de datos
+        #  command: |
+         #   echo "Creando base de datos para pruebas..."
+          #  mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE calidad;"      
       
       
       - run:
