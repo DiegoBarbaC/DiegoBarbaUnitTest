@@ -3,6 +3,10 @@ package com.mayab.quality.functional;
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.*;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FileUtils;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,6 +14,8 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.openqa.selenium.By;
+import org.openqa.selenium.OutputType;
+import org.openqa.selenium.TakesScreenshot;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 
@@ -20,7 +26,7 @@ import io.github.bonigarcia.wdm.WebDriverManager;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class SeleniumTests {
 
-    WebDriver driver;
+    static WebDriver driver;
 
     @BeforeAll
     static void setupClass() {
@@ -123,7 +129,7 @@ class SeleniumTests {
    	 	pause(5000);
     	driver.findElement(By.xpath("//div[@id='root']/div/div[2]/table/tbody/tr/td[5]/button[2]")).click();
         driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Jhon Doe'])[2]/following::button[1]")).click();
-        boolean isPresent = driver.findElement(By.xpath("/html/body/div[2]/div/div[2]/table/tbody")).getText().contains("Jhon Doee");
+        boolean isPresent = driver.findElement(By.xpath("/html/body/div[2]/div/div[2]/table/tbody")).getText().contains("Jhon Doe");
         
         // Verificar que el texto NO esté presente
         assertFalse("El registro 'John Doe' todavía está presente en la tabla.", isPresent);
@@ -183,6 +189,7 @@ class SeleniumTests {
       driver.findElement(By.name("age")).click();
       driver.findElement(By.name("age")).clear();
       driver.findElement(By.name("age")).sendKeys("19");
+      takeScreenshot("prueba");
       driver.findElement(By.xpath("//div[2]/div/i")).click();
       driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Male'])[2]/following::div[1]")).click();
       driver.findElement(By.xpath("(.//*[normalize-space(text()) and normalize-space(.)='Woah!'])[1]/following::button[1]")).click();
@@ -193,6 +200,13 @@ class SeleniumTests {
       System.out.println(actualResult);
       assertThat(actualResult, is("Javier"));
     }
+    public static void takeScreenshot (String filename) throws IOException{
+    	File file= ((TakesScreenshot)driver).getScreenshotAs(OutputType.FILE);
+    	FileUtils.copyFile(file, new File("src/screenshots/" + filename + ".jpeg"));
+    	System.out.println("screenshot");
+    	
+    }
+    
 
     private void pause(long mils) {
         try {

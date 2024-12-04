@@ -1,0 +1,42 @@
+version: 2.1
+
+executors:
+  docker-executor:
+    docker:
+      - image: maven:3.8.5-openjdk-17  # Usar Maven base image para la ejecución de las pruebas
+    working_directory: ~/workspace
+
+jobs:
+  build:
+    docker:
+      - image: maven:3.8.5-openjdk-17  # Usa una imagen base para el entorno
+    steps:
+      - checkout  # Hacer checkout del código fuente
+      - run:
+          name: Construir la imagen Docker personalizada
+          command: |
+            docker build -t diegobarba/mi-imagen:latest .
+      - run:
+          name: Iniciar contenedor y ejecutar pruebas
+          command: |
+            docker run --rm diegobarba/mi-imagen:latest
+
+  push:
+    docker:
+      - image: maven:3.8.5-openjdk-17
+    steps:
+      - checkout
+      - run:
+          name: Subir la imagen a Docker Hub
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD  # Usa las variables de entorno de CircleCI
+            docker push diegobarba/mi-imagen:latest
+
+workflows:
+  version: 2
+  build_and_push:
+    jobs:
+      - build
+      - push:
+          requires:
+            - build
