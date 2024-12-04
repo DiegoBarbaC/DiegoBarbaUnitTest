@@ -9,12 +9,12 @@ jobs:
       - run:
           name: Instalar dependencias (MySQL y Chrome)
           command: |
-            sudo apt-get update
-            sudo apt-get install -y mysql-server google-chrome-stable
+            apt-get update
+            apt-get install -y mysql-server google-chrome-stable
 
       - run:
           name: Iniciar MySQL
-          command: sudo service mysql start
+          command: service mysql start
       
       - run:
           name: Crear base de datos
