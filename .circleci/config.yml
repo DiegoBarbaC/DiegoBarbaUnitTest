@@ -17,7 +17,8 @@ jobs:
           docker_layer_caching: true  # Habilitar el caché de las capas de Docker
       - run:
           name: Install Docker client
-          command: apk add docker-cli
+          command: |
+            apt-get update && apt-get install -y docker.io
       - run:
           name: Construir la imagen Docker personalizada
           command: |
