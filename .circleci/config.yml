@@ -5,6 +5,7 @@ jobs:
     docker:
       - image: cimg/openjdk:23.0.1  # Imagen base con Java
       - image: mysql:5.7            # Imagen de MySQL como servicio
+      - image: selenoid/chrome:latest
         environment:
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: calidad
