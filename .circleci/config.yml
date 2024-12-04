@@ -19,7 +19,7 @@ jobs:
       - run:
           name: Construir la imagen Docker personalizada
           command: |
-            docker build -t diegobarba/mi-imagen:latest .
+            docker build diegobarba/mi-imagen:latest .
 
   mysql:
     docker:
