@@ -16,6 +16,9 @@ jobs:
           version: edge  # Especifica la versión de Docker
           docker_layer_caching: true  # Habilitar el caché de las capas de Docker
       - run:
+          name: Install Docker client
+          command: apk add docker-cli
+      - run:
           name: Construir la imagen Docker personalizada
           command: |
             docker build -t diegobarba/mi-imagen:latest .
