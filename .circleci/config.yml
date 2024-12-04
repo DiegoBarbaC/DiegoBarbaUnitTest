@@ -4,29 +4,40 @@ jobs:
   build_and_test:
     docker:
       - image: cimg/openjdk:23.0.1  # Imagen base con Java
-      - image: mysql:8.0            # Imagen de MySQL como servicio
-      - image: selenium/standalone-chrome
+      - image: cimg/mysql:8.0
         environment:
           MYSQL_ROOT_PASSWORD: 123456
           MYSQL_DATABASE: calidad
+          MYSQL_USER: root
+          MYSQL_PASSWORD: 123456
+
 
     steps:
       - checkout
+      - run:
+      # Our primary container isn't MYSQL so run a sleep command until it's ready.
+          name: Waiting for MySQL to be ready
+          command: |
+            for i in `seq 1 10`;
+            do
+              nc -z 127.0.0.1 3306 && echo Success && exit 0
+              echo -n .
+              sleep 1
+            done
+            echo Failed waiting for MySQL && exit 1
+
+      - run:
+          name: Install MySQL CLI; Import dummy data; run an example query
+          command: |
+            sudo apt-get install default-mysql-client
+            
 
 
       - run:
           name: Configurar base de datos
           command: |
             echo "Creando base de datos para pruebas..."
-            mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE calidad;"
-      
-
-      - run:
-          name: Instalar cliente MySQL
-          command: |
-            sudo apt-get update
-            sudo apt-get install -y mysql-client
-      
+            mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE calidad;"      
       
       
       - run:
