@@ -6,11 +6,17 @@ jobs:
       - image: cimg/openjdk:23.0.1  # Imagen base con Java
       - image: mysql:5.7            # Imagen de MySQL como servicio
         environment:
-          MYSQL_ROOT_PASSWORD: 123456
+          MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: calidad
 
     steps:
       - checkout
+      
+      - run:
+          name: Instalar cliente MySQL
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y mysql-client
       
       - run:
           name: Esperar a que MySQL esté listo
