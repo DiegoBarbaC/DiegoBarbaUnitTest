@@ -34,11 +34,18 @@ jobs:
             
 
 
-      #- run:
-       #   name: Configurar base de datos
-        #  command: |
-         #   echo "Creando base de datos para pruebas..."
-          #  mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE calidad;"      
+      - run:
+          name: Configurar base de datos
+          command: |
+            echo "Creando base de datos para pruebas..."
+            mysql -h 127.0.0.1 -u root -proot -e "CREATE TABLE usuarios (
+    id BIGINT UNSIGNED PRIMARY KEY DEFAULT 1,
+    name VARCHAR(30),
+    password VARCHAR(10),
+    email VARCHAR(100),
+    isLogged BOOL
+);" 
+               
       
       
       - run:
