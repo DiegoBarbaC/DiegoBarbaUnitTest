@@ -3,28 +3,22 @@ version: 2.1
 executors:
   docker-executor:
     docker:
-      - image: ubuntu:20.04  # Usar una imagen base de Ubuntu
+      - image: docker:20.10  # Usar una imagen base que ya tiene Docker preinstalado
     working_directory: ~/workspace
 
 jobs:
   build:
     docker:
-      - image: ubuntu:20.04  # Usar una imagen base de Ubuntu
+      - image: docker:20.10  # Usar una imagen base de Docker
     steps:
       - checkout  # Hacer checkout del código fuente
+      - setup_remote_docker:
+          version: 20.10.7  # Especificar la versión de Docker (ajustar si es necesario)
+          docker_layer_caching: true  # Activar el caché de las capas de Docker
       - run:
-          name: Install dependencies
+          name: Construir la imagen Docker personalizada
           command: |
-            apt-get update && apt-get install -y curl docker.io  # Instalar curl y Docker
-            mkdir -p ~/.docker/cli-plugins
-            curl -fsSL https://github.com/docker/buildx/releases/download/v0.19.1/buildx-v0.19.1.freebsd-arm64
-            chmod +x ~/.docker/cli-plugins/docker-buildx
-            docker buildx version  # Verificar la instalación de buildx
-      - run:
-          name: Construir la imagen Docker personalizada con buildx
-          command: |
-            docker buildx create --use  # Activar buildx
-            docker buildx build -t diegobarba/mi-imagen:latest --push .  # Construir y subir la imagen
+            docker build -t diegobarba/mi-imagen:latest .  # Construir la imagen Docker
 
   mysql:
     docker:
@@ -49,7 +43,7 @@ jobs:
 
   push:
     docker:
-      - image: ubuntu:20.04  # Usar Ubuntu también para el push, por consistencia
+      - image: docker:20.10  # Usar Docker para subir la imagen
     steps:
       - checkout
       - run:
