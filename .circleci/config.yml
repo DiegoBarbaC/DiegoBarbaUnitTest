@@ -23,7 +23,7 @@ jobs:
     steps:
       - checkout  # Hacer checkout del código fuente
       - setup_remote_docker:
-          version: 20.10.7  # Docker version
+          #version: 20.10.7  # Docker version
           docker_layer_caching: true  # Activar el caching de Docker
       - run:
           name: Esperar a que MySQL esté listo
