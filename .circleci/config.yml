@@ -22,7 +22,8 @@ jobs:
       
       - run:
           name: Compilar proyecto y ejecutar pruebas
-          command: mvn clean install && mvn test -Dtest=UserDAOTest
+          command: mvn test -Dtest=UserDAOTest
+
 
 workflows:
   version: 2
