@@ -13,8 +13,8 @@ jobs:
     steps:
       - checkout  # Hacer checkout del código fuente
       - setup_remote_docker:
-          version: edge  # Versión de Docker que puedes configurar si lo necesitas
-          docker_layer_caching: true  # Activar el caching de Docker
+          version: edge  # Especifica la versión de Docker
+          docker_layer_caching: true  # Habilitar el caché de las capas de Docker
       - run:
           name: Construir la imagen Docker personalizada
           command: |
@@ -22,7 +22,7 @@ jobs:
       
   mysql:
     docker:
-      - image: mysql:5.7  # Utilizar la imagen de MySQL
+      - image: mysql:5.7  # Utilizar la imagen oficial de MySQL
     steps:
       - run:
           name: Levantar contenedor MySQL
