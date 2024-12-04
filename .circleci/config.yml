@@ -11,7 +11,7 @@ jobs:
 
       - run:
           name: Iniciar MySQL
-          command: service mysql start
+          command: mysql start
       
       - run:
           name: Crear base de datos
