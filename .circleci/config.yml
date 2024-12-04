@@ -18,13 +18,7 @@ jobs:
             sudo apt-get update
             sudo apt-get install -y mysql-client
       
-      - run:
-          name: Esperar a que MySQL esté listo
-          command: |
-            until mysqladmin ping --host=mysql --user=root --password=root --silent; do
-              echo "Esperando a que MySQL esté listo..."
-              sleep 5
-            done
+      
       
       - run:
           name: Compilar proyecto y ejecutar pruebas
