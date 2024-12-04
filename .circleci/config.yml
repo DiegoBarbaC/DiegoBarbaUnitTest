@@ -36,14 +36,14 @@ jobs:
 
       - run:
           name: Configurar base de datos
-          command: |
+          #command: |
             echo "Creando base de datos para pruebas..."
             mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE calidad;"      
       
       
       - run:
           name: Compilar proyecto y ejecutar pruebas
-          #command: mvn test -Dtest=com.mayab..quality.unittest.UserServiceTest,com.mayab..quality.integration.UserServiceTest
+          command: mvn test -Dtest=com.mayab..quality.unittest.UserServiceTest,com.mayab..quality.integration.UserServiceTest
 
 
 workflows:
