@@ -3,23 +3,29 @@ version: 2.1
 executors:
   docker-executor:
     docker:
-      - image: ubuntu:20.04  # Usar una imagen base de Ubuntu para que se pueda usar apt-get
+      - image: ubuntu:20.04  # Usar una imagen base de Ubuntu
     working_directory: ~/workspace
 
 jobs:
   build:
     docker:
-      - image: ubuntu:20.04  # Usar una imagen base de Ubuntu para que se pueda usar apt-get
+      - image: ubuntu:20.04  # Usar una imagen base de Ubuntu
     steps:
       - checkout  # Hacer checkout del código fuente
       - run:
-          name: Install Docker
+          name: Install Docker and buildx
           command: |
-            apt-get update && apt-get install -y docker.io  # Instalar Docker usando apt-get
+            # Instalar Docker y buildx
+            apt-get update && apt-get install -y docker.io
+            mkdir -p ~/.docker/cli-plugins
+            curl -fsSL https://github.com/docker/buildx/releases/download/v0.8.0/buildx-v0.8.0-linux-amd64 -o ~/.docker/cli-plugins/docker-buildx
+            chmod +x ~/.docker/cli-plugins/docker-buildx
+            docker buildx version  # Verificar la instalación de buildx
       - run:
-          name: Construir la imagen Docker personalizada
+          name: Construir la imagen Docker personalizada con buildx
           command: |
-            docker build diegobarba/mi-imagen:latest .
+            docker buildx create --use  # Activar buildx
+            docker buildx build -t diegobarba/mi-imagen:latest --push .  # Construir y subir la imagen
 
   mysql:
     docker:
