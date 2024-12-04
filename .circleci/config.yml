@@ -3,20 +3,19 @@ version: 2.1
 jobs:
   build_and_test:
     docker:
-      - image: cimg/openjdk:23.0.1 # Imagen base con Java
-      - image: cimg/mysql:8.0
+      - image: cimg/openjdk:23.0.1  # Imagen base con Java
+      - image: mysql:5.7            # Imagen de MySQL como servicio
+        environment:
+          MYSQL_ROOT_PASSWORD: 123456
+          MYSQL_DATABASE: calidad
+
     steps:
       - checkout
       
       - run:
-          name: Crear base de datos
-          command: |
-            mysql -e "CREATE DATABASE calidad;" -u root
-
-      - run:
           name: Esperar a que MySQL esté listo
           command: |
-            until mysqladmin ping --host=localhost --port=3306 --user=root --silent; do
+            until mysqladmin ping --host=mysql --user=root --password=root --silent; do
               echo "Esperando a que MySQL esté listo..."
               sleep 5
             done
@@ -30,4 +29,3 @@ workflows:
   build_and_test:
     jobs:
       - build_and_test
-
