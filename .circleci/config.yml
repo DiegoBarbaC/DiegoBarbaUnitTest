@@ -18,7 +18,6 @@ jobs:
             apt-get update && apt-get install -y curl docker.io  # Instalar curl y Docker
             mkdir -p ~/.docker/cli-plugins
             curl -fsSL https://github.com/docker/buildx/releases/download/v0.19.1/buildx-v0.19.1.freebsd-arm64
- -o ~/.docker/cli-plugins/docker-buildx
             chmod +x ~/.docker/cli-plugins/docker-buildx
             docker buildx version  # Verificar la instalación de buildx
       - run:
