@@ -1,65 +1,41 @@
 version: 2.1
 
-executors:
-  docker-executor:
-    docker:
-      - image: docker:20.10  # Usar una imagen base que ya tiene Docker preinstalado
-    working_directory: ~/workspace
-
 jobs:
-  build:
+  build_and_test:
     docker:
-      - image: docker:20.10  # Usar una imagen base de Docker
-    steps:
-      - checkout  # Hacer checkout del código fuente
-      - setup_remote_docker:
-          version: edge  # Especificar la versión de Docker (ajustar si es necesario)
-          docker_layer_caching: true  # Activar el caché de las capas de Docker
-      - run:
-          name: Construir la imagen Docker personalizada
-          command: |
-            docker build -t diegobarba/mi-imagen:latest .  # Construir la imagen Docker
-
-  mysql:
-    docker:
-      - image: mysql:5.7  # Utilizar la imagen oficial de MySQL
-    steps:
-      - run:
-          name: Levantar contenedor MySQL
-          command: |
-            docker run --name mysql -e MYSQL_ROOT_PASSWORD=123456 -d -p 3306:3306 mysql:5.7
-      - run:
-          name: Esperar a que MySQL esté listo
-          command: |
-            # Esperar a que MySQL esté listo antes de ejecutar las pruebas
-            until docker exec mysql mysqladmin --user=root --password=123456 --host="localhost" --port=3306 ping --silent; do
-              echo "Esperando a que MySQL esté listo..."
-              sleep 5
-            done
-      - run:
-          name: Ejecutar pruebas con la imagen creada
-          command: |
-            docker run --rm --link mysql:db diegobarba/mi-imagen:latest
-
-  push:
-    docker:
-      - image: docker:20.10  # Usar Docker para subir la imagen
+      - image: circleci/openjdk:17  # Imagen base con Java
     steps:
       - checkout
       - run:
-          name: Subir la imagen a Docker Hub
+          name: Instalar dependencias (MySQL y Chrome)
           command: |
-            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD  # Usa las variables de entorno de CircleCI
-            docker push diegobarba/mi-imagen:latest
+            sudo apt-get update
+            sudo apt-get install -y mysql-server google-chrome-stable
+
+      - run:
+          name: Iniciar MySQL
+          command: sudo service mysql start
+      
+      - run:
+          name: Crear base de datos
+          command: |
+            mysql -e "CREATE DATABASE calidad;" -u root
+
+      - run:
+          name: Esperar a que MySQL esté listo
+          command: |
+            until mysqladmin ping --host=localhost --port=3306 --user=root --silent; do
+              echo "Esperando a que MySQL esté listo..."
+              sleep 5
+            done
+      
+      - run:
+          name: Compilar proyecto y ejecutar pruebas
+          command: mvn clean install && mvn test -Dtest=UserDAOTest
 
 workflows:
   version: 2
-  build_and_push:
+  build_and_test:
     jobs:
-      - build
-      - mysql:
-          requires:
-            - build
-      - push:
-          requires:
-            - mysql
+      - build_and_test
+
