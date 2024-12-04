@@ -3,22 +3,19 @@ version: 2.1
 executors:
   docker-executor:
     docker:
-      - image: maven:3.8.5-openjdk-17  # Usar Maven base image para la ejecución de las pruebas
+      - image: ubuntu:20.04  # Usar una imagen base de Ubuntu para que se pueda usar apt-get
     working_directory: ~/workspace
 
 jobs:
   build:
     docker:
-      - image: maven:3.8.5-openjdk-17  # Usar una imagen base para la ejecución de las pruebas
+      - image: ubuntu:20.04  # Usar una imagen base de Ubuntu para que se pueda usar apt-get
     steps:
       - checkout  # Hacer checkout del código fuente
-      - setup_remote_docker:
-          version: edge  # Especifica la versión de Docker
-          docker_layer_caching: true  # Habilitar el caché de las capas de Docker
       - run:
-          name: Install Docker client
+          name: Install Docker
           command: |
-            apt-get update && apt-get install -y docker.io
+            apt-get update && apt-get install -y docker.io  # Instalar Docker usando apt-get
       - run:
           name: Construir la imagen Docker personalizada
           command: |
@@ -47,11 +44,9 @@ jobs:
 
   push:
     docker:
-      - image: maven:3.8.5-openjdk-17
+      - image: ubuntu:20.04  # Usar Ubuntu también para el push, por consistencia
     steps:
       - checkout
-      - setup_remote_docker:
-          docker_layer_caching: true
       - run:
           name: Subir la imagen a Docker Hub
           command: |
