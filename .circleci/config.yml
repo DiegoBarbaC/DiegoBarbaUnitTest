@@ -22,7 +22,7 @@ jobs:
       
       - run:
           name: Compilar proyecto y ejecutar pruebas
-          command: mvn test -Dtest=com.mayab..quality.unittest.UserServiceTest,om.mayab..quality.functional.SeleniumTests
+          command: mvn test -Dtest=com.mayab..quality.unittest.UserServiceTest,com.mayab..quality.functional.SeleniumTests
 
 
 workflows:
