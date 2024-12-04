@@ -3,45 +3,30 @@ version: 2.1
 executors:
   docker-executor:
     docker:
-      - image: maven:3.8.5-openjdk-17  # Usar una imagen base para la ejecución de las pruebas
+      - image: maven:3.8.5-openjdk-17  # Usa una imagen base para el entorno
     working_directory: ~/workspace
 
 jobs:
   build:
     docker:
-      - image: maven:3.8.5-openjdk-17  # Usa una imagen base para el entorno
+      - image: maven:3.8.5-openjdk-17  # Usar una imagen base para la ejecución de las pruebas
     steps:
       - checkout  # Hacer checkout del código fuente
       - setup_remote_docker:
-          version: 20.10.7  # Especifica la versión de Docker que quieres usar
           docker_layer_caching: true  # Activar el caching de Docker
       - run:
           name: Construir la imagen Docker personalizada
           command: |
             docker build -t diegobarba/mi-imagen:latest .
-      - run:
-          name: Iniciar contenedor y ejecutar pruebas
-          command: |
-            docker run --rm diegobarba/mi-imagen:latest
-
-  push:
-    docker:
-      - image: maven:3.8.5-openjdk-17
-    steps:
-      - checkout
-      - setup_remote_docker:
-          version: 20.10.7
-          docker_layer_caching: true
-      - run:
-          name: Subir la imagen a Docker Hub
-          command: |
-            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD  # Usa las variables de entorno de CircleCI
-            docker push diegobarba/mi-imagen:latest
-
-  mysql_wait:
+      
+  mysql:
     docker:
       - image: mysql:5.7  # Utilizar la imagen de MySQL
     steps:
+      - run:
+          name: Levantar contenedor MySQL
+          command: |
+            docker run --name mysql -e MYSQL_ROOT_PASSWORD=123456 -d -p 3306:3306 mysql:5.7
       - run:
           name: Esperar a que MySQL esté listo
           command: |
@@ -50,15 +35,32 @@ jobs:
               echo "Esperando a que MySQL esté listo..."
               sleep 5
             done
+      - run:
+          name: Ejecutar pruebas con la imagen creada
+          command: |
+            docker run --rm --link mysql:db diegobarba/mi-imagen:latest
+
+  push:
+    docker:
+      - image: maven:3.8.5-openjdk-17
+    steps:
+      - checkout
+      - setup_remote_docker:
+          docker_layer_caching: true
+      - run:
+          name: Subir la imagen a Docker Hub
+          command: |
+            docker login -u $DOCKER_USER -p $DOCKER_PASSWORD  # Usa las variables de entorno de CircleCI
+            docker push diegobarba/mi-imagen:latest
 
 workflows:
   version: 2
   build_and_push:
     jobs:
       - build
+      - mysql:
+          requires:
+            - build
       - push:
           requires:
-            - build
-      - mysql_wait:
-          requires:
-            - build
+            - mysql
