@@ -7,7 +7,7 @@ jobs:
       - image: mysql:8.0            # Imagen de MySQL como servicio
       - image: selenium/standalone-chrome
         environment:
-          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_PASSWORD: 123456
           MYSQL_DATABASE: calidad
 
     steps:
@@ -20,7 +20,7 @@ jobs:
             echo "Creando base de datos para pruebas..."
             mysql -h 127.0.0.1 -u root -proot -e "CREATE DATABASE calidad;"
       
-      
+
       - run:
           name: Instalar cliente MySQL
           command: |
